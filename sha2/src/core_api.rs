@@ -57,7 +57,7 @@ impl VariableOutputCore for Sha256VarCore {
 
     #[inline]
     fn finalize_variable_core(&mut self, buffer: &mut Buffer<Self>, out: &mut Self::Output) {
-        let bs = 32;
+        let bs = 64;
         let bit_len = 8 * (buffer.get_pos() as u64 + bs * self.block_len);
         buffer.len64_padding_be(bit_len, |b| compress256(&mut self.state, from_ref(b)));
 
@@ -131,7 +131,7 @@ impl VariableOutputCore for Sha512VarCore {
 
     #[inline]
     fn finalize_variable_core(&mut self, buffer: &mut Buffer<Self>, out: &mut Self::Output) {
-        let bs = 64;
+        let bs = 128;
         let bit_len = 8 * (buffer.get_pos() as u128 + bs * self.block_len);
         buffer.len128_padding_be(bit_len, |b| compress512(&mut self.state, from_ref(b)));
 
