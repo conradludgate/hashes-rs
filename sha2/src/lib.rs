@@ -55,7 +55,6 @@
 pub use digest::{self, Digest};
 
 use digest::{
-    consts::{U28, U32, U48, U64},
     core_api::{CoreWrapper, CtVariableCoreWrapper},
 };
 
@@ -73,14 +72,14 @@ pub use sha512::compress512;
 pub use core_api::{Sha256VarCore, Sha512VarCore};
 
 /// SHA-224 hasher.
-pub type Sha224 = CoreWrapper<CtVariableCoreWrapper<Sha256VarCore, U28>>;
+pub type Sha224 = CoreWrapper<CtVariableCoreWrapper<Sha256VarCore, 28>>;
 /// SHA-256 hasher.
-pub type Sha256 = CoreWrapper<CtVariableCoreWrapper<Sha256VarCore, U32>>;
+pub type Sha256 = CoreWrapper<CtVariableCoreWrapper<Sha256VarCore, 32>>;
 /// SHA-512/224 hasher.
-pub type Sha512_224 = CoreWrapper<CtVariableCoreWrapper<Sha512VarCore, U28>>;
+pub type Sha512_224 = CoreWrapper<CtVariableCoreWrapper<Sha512VarCore, 28>>;
 /// SHA-512/256 hasher.
-pub type Sha512_256 = CoreWrapper<CtVariableCoreWrapper<Sha512VarCore, U32>>;
+pub type Sha512_256 = CoreWrapper<CtVariableCoreWrapper<Sha512VarCore, 32>>;
 /// SHA-384 hasher.
-pub type Sha384 = CoreWrapper<CtVariableCoreWrapper<Sha512VarCore, U48>>;
+pub type Sha384 = CoreWrapper<CtVariableCoreWrapper<Sha512VarCore, 48>>;
 /// SHA-512 hasher.
-pub type Sha512 = CoreWrapper<CtVariableCoreWrapper<Sha512VarCore, U64>>;
+pub type Sha512 = CoreWrapper<CtVariableCoreWrapper<Sha512VarCore, 64>>;

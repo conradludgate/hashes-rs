@@ -3,11 +3,10 @@ use core::{fmt, slice::from_ref};
 use digest::{
     block_buffer::Eager,
     core_api::{
-        AlgorithmName, Block, BlockSizeUser, Buffer, BufferKindUser, OutputSizeUser, TruncSide,
+        AlgorithmName, BlockSizeUser, Buffer, BufferKindUser, OutputSizeUser, TruncSide,
         UpdateCore, VariableOutputCore,
     },
-    typenum::{Unsigned, U128, U32, U64},
-    HashMarker, InvalidOutputSize, Output,
+    HashMarker, InvalidOutputSize,
 };
 
 /// Core block-level SHA-256 hasher with variable output size.
@@ -23,7 +22,7 @@ pub struct Sha256VarCore {
 impl HashMarker for Sha256VarCore {}
 
 impl BlockSizeUser for Sha256VarCore {
-    type BlockSize = U64;
+    type Block = [u8; 64];
 }
 
 impl BufferKindUser for Sha256VarCore {
@@ -32,14 +31,14 @@ impl BufferKindUser for Sha256VarCore {
 
 impl UpdateCore for Sha256VarCore {
     #[inline]
-    fn update_blocks(&mut self, blocks: &[Block<Self>]) {
+    fn update_blocks(&mut self, blocks: &[Self::Block]) {
         self.block_len += blocks.len() as u64;
         compress256(&mut self.state, blocks);
     }
 }
 
 impl OutputSizeUser for Sha256VarCore {
-    type OutputSize = U32;
+    type Output = [u8; 32];
 }
 
 impl VariableOutputCore for Sha256VarCore {
@@ -57,8 +56,8 @@ impl VariableOutputCore for Sha256VarCore {
     }
 
     #[inline]
-    fn finalize_variable_core(&mut self, buffer: &mut Buffer<Self>, out: &mut Output<Self>) {
-        let bs = Self::BlockSize::U64;
+    fn finalize_variable_core(&mut self, buffer: &mut Buffer<Self>, out: &mut Self::Output) {
+        let bs = 32;
         let bit_len = 8 * (buffer.get_pos() as u64 + bs * self.block_len);
         buffer.len64_padding_be(bit_len, |b| compress256(&mut self.state, from_ref(b)));
 
@@ -95,7 +94,7 @@ pub struct Sha512VarCore {
 impl HashMarker for Sha512VarCore {}
 
 impl BlockSizeUser for Sha512VarCore {
-    type BlockSize = U128;
+    type Block = [u8; 128];
 }
 
 impl BufferKindUser for Sha512VarCore {
@@ -104,14 +103,14 @@ impl BufferKindUser for Sha512VarCore {
 
 impl UpdateCore for Sha512VarCore {
     #[inline]
-    fn update_blocks(&mut self, blocks: &[Block<Self>]) {
+    fn update_blocks(&mut self, blocks: &[Self::Block]) {
         self.block_len += blocks.len() as u128;
         compress512(&mut self.state, blocks);
     }
 }
 
 impl OutputSizeUser for Sha512VarCore {
-    type OutputSize = U64;
+    type Output = [u8; 64];
 }
 
 impl VariableOutputCore for Sha512VarCore {
@@ -131,8 +130,8 @@ impl VariableOutputCore for Sha512VarCore {
     }
 
     #[inline]
-    fn finalize_variable_core(&mut self, buffer: &mut Buffer<Self>, out: &mut Output<Self>) {
-        let bs = Self::BlockSize::U64 as u128;
+    fn finalize_variable_core(&mut self, buffer: &mut Buffer<Self>, out: &mut Self::Output) {
+        let bs = 64;
         let bit_len = 8 * (buffer.get_pos() as u128 + bs * self.block_len);
         buffer.len128_padding_be(bit_len, |b| compress512(&mut self.state, from_ref(b)));
 
